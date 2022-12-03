@@ -43,7 +43,7 @@ in  {
 
     # The swanctl command complains when the following directories don't exist:
     # See: https://wiki.strongswan.org/projects/strongswan/wiki/Swanctldirectory
-    system.activationScripts.strongswan-swanctl-etc = stringAfter ["etc"] ''
+    system.activationScripts.strongswan-swanctl-etc.text = ''
       mkdir -p '/etc/swanctl/x509'     # Trusted X.509 end entity certificates
       mkdir -p '/etc/swanctl/x509ca'   # Trusted X.509 Certificate Authority certificates
       mkdir -p '/etc/swanctl/x509ocsp'
