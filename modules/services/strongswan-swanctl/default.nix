@@ -19,6 +19,7 @@ in  {
       '';
     };
 
+
     strongswan.extraConfig = mkOption {
       type = types.str;
       default = "";
@@ -38,12 +39,12 @@ in  {
       }
     ];
 
-    environment.etc."swanctl/swanctl.conf".text =
-      paramsToConf cfg.swanctl swanctlParams;
-
+    environment.etc."swanctl/swanctl.conf".text = paramsToConf cfg.swanctl swanctlParams;
+    
     # The swanctl command complains when the following directories don't exist:
     # See: https://wiki.strongswan.org/projects/strongswan/wiki/Swanctldirectory
-    system.activationScripts.strongswan-swanctl-etc.text = ''
+    system.activationScripts.strongswan-swanctl-etc.text =
+    ''
       mkdir -p '/etc/swanctl/x509'     # Trusted X.509 end entity certificates
       mkdir -p '/etc/swanctl/x509ca'   # Trusted X.509 Certificate Authority certificates
       mkdir -p '/etc/swanctl/x509ocsp'
@@ -57,23 +58,35 @@ in  {
       mkdir -p '/etc/swanctl/bliss'
       mkdir -p '/etc/swanctl/pkcs8'    # PKCS#8 encoded private keys of any type
       mkdir -p '/etc/swanctl/pkcs12'   # PKCS#12 containers
-    '';
+      
+      ln -s /etc/swanctl/swanctl.conf ${pkgs.strongswan}/etc/swanctl/conf.d/default.conf 
+      ln -s /etc/swanctl/x509 ${pkgs.strongswan}/etc/swanctl/x509 
+      ln -s /etc/swanctl/x509ca ${pkgs.strongswan}/etc/swanctl/x509ca 
+      ln -s /etc/swanctl/x509ocsp ${pkgs.strongswan}/etc/swanctl/x509ocsp 
+      ln -s /etc/swanctl/x509aa ${pkgs.strongswan}/etc/swanctl/x509aa 
+      ln -s /etc/swanctl/x509ac ${pkgs.strongswan}/etc/swanctl/x509ac 
+      ln -s /etc/swanctl/x509crl ${pkgs.strongswan}/etc/swanctl/x509crl 
+      ln -s /etc/swanctl/pubkey ${pkgs.strongswan}/etc/swanctl/pubkey 
+      ln -s /etc/swanctl/private ${pkgs.strongswan}/etc/swanctl/private 
+      ln -s /etc/swanctl/rsa ${pkgs.strongswan}/etc/swanctl/rsa 
+      ln -s /etc/swanctl/ecdsa ${pkgs.strongswan}/etc/swanctl/ecdsa 
+      ln -s /etc/swanctl/bliss ${pkgs.strongswan}/etc/swanctl/bliss 
+      ln -s /etc/swanctl/pkcs8 ${pkgs.strongswan}/etc/swanctl/pkcs8 
+      ln -s /etc/swanctl/pkcs12 ${pkgs.strongswan}/etc/swanctl/pkcs12 
+     '';
 
     launchd.daemons.strongswan-swanctl = {
-      description = "strongSwan IPsec IKEv1/IKEv2 daemon using swanctl";
-      script = "${pkgs.strongswan}/sbin/ipsec start --nofork && ${cfg.package}/sbin/swanctl --load-all --noprompt";
+      script = "
+        ${pkgs.strongswan}/sbin/ipsec start --nofork && ${cfg.package}/sbin/swanctl --load-all --noprompt
+      ";
       environment = {
-        STRONGSWAN_CONF = pkgs.writeTextFile {
-          name = "strongswan.conf";
-          text = cfg.strongswan.extraConfig;
-        };
         SWANCTL_DIR = "/etc/swanctl";
       };
       serviceConfig = {
         RunAtLoad = true;
         KeepAlive.NetworkState = true;
-        StandardErrorPath = "${environment.SWANCTL_DIR}/buildkite-agent.log";
-        StandardOutPath = "${environment.SWANCTL_DIR}/buildkite-agent.log";
+        StandardErrorPath = "${config.launchd.daemons.strongswan-swanctl.environment.SWANCTL_DIR}/buildkite-agent.log";
+        StandardOutPath = "${config.launchd.daemons.strongswan-swanctl.environment.SWANCTL_DIR}/buildkite-agent.log";
       };
     };
   };
