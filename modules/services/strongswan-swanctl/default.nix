@@ -59,7 +59,21 @@ in  {
       mkdir -p '/etc/swanctl/pkcs8'    # PKCS#8 encoded private keys of any type
       mkdir -p '/etc/swanctl/pkcs12'   # PKCS#12 containers
       
-      ln -s /etc/swanctl/swanctl.conf ${pkgs.strongswan}/etc/swanctl/conf.d/default.conf 
+      rm -rf ${pkgs.strongswan}/etc/swanctl/swanctl.conf
+      rm -rf ${pkgs.strongswan}/etc/swanctl/x509 
+      rm -rf ${pkgs.strongswan}/etc/swanctl/x509ca 
+      rm -rf ${pkgs.strongswan}/etc/swanctl/x509ocsp 
+      rm -rf ${pkgs.strongswan}/etc/swanctl/x509aa 
+      rm -rf ${pkgs.strongswan}/etc/swanctl/x509ac 
+      rm -rf ${pkgs.strongswan}/etc/swanctl/x509crl 
+      rm -rf ${pkgs.strongswan}/etc/swanctl/pubkey 
+      rm -rf ${pkgs.strongswan}/etc/swanctl/private 
+      rm -rf ${pkgs.strongswan}/etc/swanctl/rsa 
+      rm -rf ${pkgs.strongswan}/etc/swanctl/ecdsa 
+      rm -rf ${pkgs.strongswan}/etc/swanctl/bliss 
+      rm -rf ${pkgs.strongswan}/etc/swanctl/pkcs8 
+      rm -rf ${pkgs.strongswan}/etc/swanctl/pkcs12 
+      ln -s /etc/swanctl/swanctl.conf ${pkgs.strongswan}/etc/swanctl/swanctl.conf 
       ln -s /etc/swanctl/x509 ${pkgs.strongswan}/etc/swanctl/x509 
       ln -s /etc/swanctl/x509ca ${pkgs.strongswan}/etc/swanctl/x509ca 
       ln -s /etc/swanctl/x509ocsp ${pkgs.strongswan}/etc/swanctl/x509ocsp 
