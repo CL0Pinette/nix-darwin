@@ -66,7 +66,7 @@ in
       ${cfg.activationScripts.networking.text}
       ${cfg.activationScripts.keyboard.text}
       ${cfg.activationScripts.fonts.text}
-      ${cfg.activationScripts.strongswan-swanctl.text}
+      ${cfg.activationScripts.strongswan-swanctl-etc.text}
 
       ${cfg.activationScripts.postActivation.text}
 
