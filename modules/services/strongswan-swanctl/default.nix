@@ -59,26 +59,6 @@ in  {
       mkdir -p '/etc/swanctl/pkcs12'   # PKCS#12 containers
     '';
 
-    systemd.services.strongswan-swanctl = {
-      description = "strongSwan IPsec IKEv1/IKEv2 daemon using swanctl";
-      wantedBy = [ "multi-user.target" ];
-      after    = [ "network-online.target" ];
-      path     = with pkgs; [ kmod iproute2 iptables util-linux ];
-      environment = {
-        STRONGSWAN_CONF = pkgs.writeTextFile {
-          name = "strongswan.conf";
-          text = cfg.strongswan.extraConfig;
-        };
-        SWANCTL_DIR = "/etc/swanctl";
-      };
-      restartTriggers = [ config.environment.etc."swanctl/swanctl.conf".source ];
-      serviceConfig = {
-        ExecStart     = "${cfg.package}/sbin/charon-systemd";
-        Type          = "notify";
-        ExecStartPost = "${cfg.package}/sbin/swanctl --load-all --noprompt";
-        ExecReload    = "${cfg.package}/sbin/swanctl --reload";
-        Restart       = "on-abnormal";
-      };
     };
   };
 }
