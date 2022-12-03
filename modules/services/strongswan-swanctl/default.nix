@@ -59,5 +59,22 @@ in  {
       mkdir -p '/etc/swanctl/pkcs12'   # PKCS#12 containers
     '';
 
+    launchd.daemons.strongswan-swanctl = {
+      description = "strongSwan IPsec IKEv1/IKEv2 daemon using swanctl";
+      script = "${pkgs.strongswan}/sbin/ipsec start --nofork && ${cfg.package}/sbin/swanctl --load-all --noprompt";
+      environment = {
+        STRONGSWAN_CONF = pkgs.writeTextFile {
+          name = "strongswan.conf";
+          text = cfg.strongswan.extraConfig;
+        };
+        SWANCTL_DIR = "/etc/swanctl";
+      };
+      serviceConfig = {
+        RunAtLoad = true;
+        KeepAlive.NetworkState = true;
+        StandardErrorPath = "${environment.SWANCTL_DIR}/buildkite-agent.log";
+        StandardOutPath = "${environment.SWANCTL_DIR}/buildkite-agent.log";
+      };
+    };
   };
 }

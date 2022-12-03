@@ -147,5 +147,12 @@ in
     # here we should use the default strongswan ipsec.secrets and
     # append to it (default one is empty so not a pb for now)
     environment.etc."ipsec.secrets".source = secretsFile;
+
+    launchd.daemons.strongswan = {
+      script = "${pkgs.strongswan}/sbin/ipsec start --nofork";
+      environment = {
+        STRONGSWAN_CONF = strongswanConf { inherit setup connections ca secretsFile managePlugins enabledPlugins; };
+      };
+    };
   };
 }
