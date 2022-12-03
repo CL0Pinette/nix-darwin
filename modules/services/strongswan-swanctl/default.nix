@@ -59,6 +59,5 @@ in  {
       mkdir -p '/etc/swanctl/pkcs12'   # PKCS#12 containers
     '';
 
-    };
   };
 }
